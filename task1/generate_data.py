@@ -1,12 +1,21 @@
+import os
 import numpy as np
 import torch
 import abc_py
 
-def generate_data(state = 'alu2_0130622'):
+from obtain_aig import obtain_aig
+
+def generate_data(state):
+    obtain_aig(state)
+
+    temp_folder = "temp"
     state_aig = state + ".aig"
+    state_aig_path = os.path.join(temp_folder, state_aig)
     _abc = abc_py.AbcInterface ()
     _abc.start()
-    _abc.read(state_aig)
+    _abc.read(state_aig_path)
+    os.remove(state_aig_path)
+
     data = {}
     numNodes = _abc.numNodes()
     data['node_type'] = np.zeros(numNodes, dtype=int)
@@ -28,20 +37,21 @@ def generate_data(state = 'alu2_0130622'):
             if nodeType == 5:
                 data['num_inverted_predecessors'][nodeIdx] = 2
         if (aigNode.hasFanin0()):
-            fanin = aigNode.fanin0 ()
+            fanin = aigNode.fanin0()
             edge_src_index.append(nodeIdx)
             edge_target_index.append(fanin)
         if (aigNode.hasFanin1()):
-            fanin = aigNode.fanin1 ()
+            fanin = aigNode.fanin1()
             edge_src_index.append(nodeIdx)
             edge_target_index.append(fanin)
     data['edge_index'] = torch.tensor([edge_src_index, edge_target_index], dtype=torch.long)
-    data['node_type'] = torch.tensor(data['node_type'])
-    data['num_inverted_predecessors'] = torch.tensor(data['num_inverted_predecessors'])
+    # data['node_type'] = torch.tensor(data['node_type'])
+    # data['num_inverted_predecessors'] = torch.tensor(data['num_inverted_predecessors'])
+    data['node_features'] = torch.tensor(list(zip(data['node_type'], data['num_inverted_predecessors'])))
     data['nodes'] = numNodes
 
     return data
 
 if __name__ == "__main__":
-    data = generate_data()
+    data = generate_data('alu2_0130622')
     print(data)

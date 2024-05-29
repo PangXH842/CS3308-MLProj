@@ -1,12 +1,15 @@
 import os
 
-def obtain_aig(state = 'alu2_0130622'):
+def obtain_aig(state):
     # Obtain current AIG
+    temp_folder = "temp"
     circuitName, actions = state.split('_')
     circuitPath = './InitialAIG/train/' + circuitName + '.aig'
     libFile = './lib/7nm/7nm.lib'
-    logFile = 'alu2.log'
+    logFile = circuitName + '.log'
+    logFile_path = os.path.join(temp_folder, logFile)
     state_aig = state + '.aig' # current AIG file
+    state_aig_path = os.path.join(temp_folder, state_aig)
     synthesisOpToPosDic = {
         0: "refactor",
         1: "refactor -z",
@@ -22,9 +25,9 @@ def obtain_aig(state = 'alu2_0130622'):
     abcRunCmd = "./oss-cad-suite/bin/yosys-abc -c \""\
                     + "read " + circuitPath + "; " + action_cmd \
                     + "read_lib " + libFile + "; "\
-                    + "write " + state_aig + "; print_stats"\
-                + "\" > " + logFile
+                    + "write " + state_aig_path + "; print_stats"\
+                + "\" > " + logFile_path
     os.system(abcRunCmd)
 
 if __name__ == "__main__":
-    obtain_aig()
+    obtain_aig('alu2_0130622')

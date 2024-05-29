@@ -1,11 +1,15 @@
 import os
 import re
 
-def evaluate_aig(state = 'alu2_0130622'):
+from obtain_aig import obtain_aig
+
+def evaluate_aig(state):
+    obtain_aig(state)
+
     circuitName, actions = state.split('_')
     circuitPath = './InitialAIG/train/' + circuitName + '.aig'
     libFile = './lib/7nm/7nm.lib'
-    logFile = 'alu2.log'
+    logFile = circuitName + '.log'
     state_aig = state + '.aig' # current AIG file
 
     # Evaluate AIG with yosys
@@ -36,9 +40,11 @@ def evaluate_aig(state = 'alu2_0130622'):
         areaInformation = re.findall('[a-zA-Z0-9.]+', f.readlines()[-1])
         baseline = float(areaInformation[-9]) * float(areaInformation[-4])
     eval = 1 - eval/baseline
+    
+    os.remove(state_aig)
 
     return eval
 
 if __name__ == "__main__":
-    eval = evaluate_aig()
+    eval = evaluate_aig('alu2_0130622')
     print(eval)
