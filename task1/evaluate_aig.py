@@ -9,21 +9,22 @@ logFile = 'alu2.log'
 nextState = state + '.aig' # current AIG file
 
 # Evaluate AIG with yosys
-abcRunCmd = "./yosys-abc -c \""\
-                + "read " + circuitPath + "; "\
+print("Evaluating AIG")
+abcRunCmd = "./oss-cad-suite/bin/yosys-abc -c \""\
+                + "read " + nextState + "; "\
                 + "read_lib " + libFile + "; "\
                 + "map; topo; stime"\
-            + "\" >>" + logFile
+            + "\" >" + logFile
 os.system(abcRunCmd)
 with open(logFile, 'r') as f:
     areaInformation = re.findall('[a-zA-Z0-9.]+', f.readlines()[-1])
-    print(areaInformation)
-    eval = float(areaInformation[-9]) * float(areaInformation[-4])
+print(areaInformation)
+eval = float(areaInformation[-9]) * float(areaInformation[-4])
 
 # Regularize with resyn2
 RESYN2_CMD = "balance; rewrite; refactor; balance; rewrite; "\
                 + "rewrite -z; balance; refactor -z; rewrite -z; balance; "
-abcRunCmd = "./yosys-abc -c \""\
+abcRunCmd = "./oss-cad-suite/bin/yosys-abc -c \""\
                 +"read " + circuitPath + "; "\
                 + RESYN2_CMD \
                 + "read_lib " + libFile + "; "\

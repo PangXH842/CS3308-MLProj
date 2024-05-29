@@ -5,6 +5,7 @@ import re
 import abc_py
 
 # Obtain current AIG
+print("Obtain current AIG")
 state = 'alu2_0130622'
 circuitName, actions = state.split('_')
 circuitPath = './InitialAIG/train/' + circuitName + '.aig'
@@ -31,20 +32,22 @@ abcRunCmd = "./oss-cad-suite/bin/yosys-abc -c \""\
 os.system(abcRunCmd)
 
 # Evaluate AIG with yosys
-abcRunCmd = "./yosys-abc -c \""\
-                + "read " + circuitPath + "; "\
+print("Evaluating AIG")
+abcRunCmd = "./oss-cad-suite/bin/yosys-abc -c \""\
+                + "read " + nextState + "; "\
                 + "read_lib " + libFile + "; "\
                 + "map; topo; stime"\
             + "\" >" + logFile
 os.system(abcRunCmd)
 with open(logFile, 'r') as f:
     areaInformation = re.findall('[a-zA-Z0-9.]+', f.readlines()[-1])
-    eval = float(areaInformation[-9]) * float(areaInformation[-4])
+print(areaInformation)
+eval = float(areaInformation[-9]) * float(areaInformation[-4])
 
 # Regularize with resyn2
 RESYN2_CMD = "balance; rewrite; refactor; balance; rewrite; "\
                 + "rewrite -z; balance; refactor -z; rewrite -z; balance; "
-abcRunCmd = "./yosys-abc -c \""\
+abcRunCmd = "./oss-cad-suite/bin/yosys-abc -c \""\
                 +"read " + circuitPath + "; "\
                 + RESYN2_CMD \
                 + "read_lib " + libFile + "; "\
@@ -58,7 +61,10 @@ with open(logFile, 'r') as f:
     baseline = float(areaInformation[-9]) * float(areaInformation[-4])
 eval = 1 - eval/baseline
 
-_abc = abc_py.AbcInterface ()
+print(eval)
+exit(0)
+
+_abc = abc_py.AbcInterface()
 _abc.start()
 _abc.read(state)
 data = {}
