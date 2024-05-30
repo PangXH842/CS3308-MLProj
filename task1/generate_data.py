@@ -45,9 +45,9 @@ def generate_data(state):
             edge_src_index.append(nodeIdx)
             edge_target_index.append(fanin)
     data['edge_index'] = torch.tensor([edge_src_index, edge_target_index], dtype=torch.long)
-    # data['node_type'] = torch.tensor(data['node_type'])
-    # data['num_inverted_predecessors'] = torch.tensor(data['num_inverted_predecessors'])
-    data['node_features'] = torch.tensor(list(zip(data['node_type'], data['num_inverted_predecessors'])))
+    # data['node_features'] = torch.tensor(list(zip(data['node_type'], data['num_inverted_predecessors'])))
+    data['node_type'] = torch.tensor(data['node_type'])
+    data['num_inverted_predecessors'] = torch.tensor(data['num_inverted_predecessors'])
     data['nodes'] = numNodes
 
     return data

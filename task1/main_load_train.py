@@ -45,19 +45,28 @@ def main(args):
     log_file = log_path + f"{timestamp}.log"
     with open(log_file, 'w') as f:
         pass
-    log(log_file, "main_build_dataset.py")
+    log(log_file, "main_load_train.py")
 
     start_time = time.time()
 
-    # Construct train dataset
-    log(log_file, "\nConstructing train dataset...")
-    train_data_list, train_score_list = load_data("./task1/train_data/", args.samples_per_folder, log_file)
-    train_dataset = AIGDataset(train_data_list, train_score_list)
+    # # Construct train dataset
+    # log(log_file, "\nConstructing train dataset...")
+    # train_data_list, train_score_list = load_data("./task1/train_data/", args.samples_per_folder, log_file)
+    # train_dataset = AIGDataset(train_data_list, train_score_list)
 
-    # Construct test dataset
-    log(log_file, "\nConstructing test dataset...")
-    test_data_list, test_score_list = load_data("./task1/test_data/", args.samples_per_folder, log_file)
-    test_dataset = AIGDataset(test_data_list, test_score_list)
+    # # Construct test dataset
+    # log(log_file, "\nConstructing test dataset...")
+    # test_data_list, test_score_list = load_data("./task1/test_data/", args.samples_per_folder, log_file)
+    # test_dataset = AIGDataset(test_data_list, test_score_list)
+
+    # Load the datasets
+    log(log_file, "\nLoading datasets")
+    train_dataset_file = "train_dataset.pkl"
+    test_dataset_file = "test_dataset.pkl"
+    with open(train_dataset_file, 'rb') as f:
+        train_dataset = pickle.load(f)
+    with open(test_dataset_file, 'rb') as f:
+        test_dataset = pickle.load(f)
 
     # Build GCN model
     model = GCN()
