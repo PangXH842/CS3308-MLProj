@@ -3,6 +3,8 @@ import os
 def obtain_aig(state):
     # Obtain current AIG
     temp_folder = "temp"
+    os.makedirs(temp_folder, exist_ok=True)
+    
     circuitName, actions = state.split('_')
     circuitPath = './InitialAIG/train/' + circuitName + '.aig'
     libFile = './lib/7nm/7nm.lib'
