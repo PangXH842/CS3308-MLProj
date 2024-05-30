@@ -112,7 +112,6 @@ if __name__ == "__main__":
     parser.add_argument('--epochs', type=int, default=10)
     parser.add_argument('--learning_rate', type=float, default=0.01)
     parser.add_argument('--samples_per_folder', type=int, default=10)
-    parser.add_argument('--batch_size', type=int, default=32)  # Added batch_size argument
     args = parser.parse_args()
 
     main(args)
