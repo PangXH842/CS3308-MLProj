@@ -25,7 +25,7 @@ def load_data(folder_path, samples_per_folder):
             print(f"Reading file: {states_file_path}")
             with open(states_file_path, 'rb') as f:
                 states = pickle.load(f)
-                for state, score in zip(states['input'], states['target']):
+                for state, score in list(zip(states['input'], states['target']))[1:]:  # Skipping first state
                     data = generate_data(state)
                     data_list.append(data)
                     score_list.append(score)
