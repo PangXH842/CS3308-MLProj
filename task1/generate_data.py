@@ -1,11 +1,21 @@
 import os
 import numpy as np
-import torch
 import abc_py
+import torch
+from torch_geometric.data import Data
 
 from obtain_aig import obtain_aig
 
-def generate_data(state):
+def build_graph(data, score):
+    x = torch.tensor(list(zip(data['node_type'], data['num_inverted_predecessors'])), dtype=torch.float)
+    edge_index = data["edge_index"]
+    y = torch.tensor([score], dtype=torch.float)
+
+    graph = Data(x=x, edge_index=edge_index, y=y)
+
+    return graph
+
+def generate_data(state, score):
     obtain_aig(state)
 
     temp_folder = "temp"
@@ -45,13 +55,14 @@ def generate_data(state):
             edge_src_index.append(nodeIdx)
             edge_target_index.append(fanin)
     data['edge_index'] = torch.tensor([edge_src_index, edge_target_index], dtype=torch.long)
-    # data['node_features'] = torch.tensor(list(zip(data['node_type'], data['num_inverted_predecessors'])))
     data['node_type'] = torch.tensor(data['node_type'])
     data['num_inverted_predecessors'] = torch.tensor(data['num_inverted_predecessors'])
     data['nodes'] = numNodes
 
-    return data
+    graph = build_graph(data, score)
+
+    return graph
 
 if __name__ == "__main__":
-    data = generate_data('alu2_0130622')
+    data = generate_data('alu2_0130622', 0)
     print(data)
