@@ -2,20 +2,14 @@ import os
 import random
 import pickle
 import argparse
-import datetime
 import time
 import numpy as np
 import torch
 from torch_geometric.loader import DataLoader
 
 from GCN import GCN
-from evaluate_aig import evaluate_aig
 from generate_data import generate_data
-
-def log(logf, message):
-    print(message)
-    with open(logf, 'a') as f:
-        f.write(message + "\n")
+from project.scripts.task1.utils import log, init_log, generate_line_graph
 
 def load_data(folder_path, samples_per_folder, log_file):
     graphs = []
@@ -37,14 +31,7 @@ def load_data(folder_path, samples_per_folder, log_file):
 
 def main(args):
     # Create log file
-    log_path = "./logs/"
-    os.makedirs(log_path, exist_ok=True)
-    timestamp = datetime.datetime.now().strftime("%y%m%d_%H%M")
-    log_file = log_path + f"{timestamp}.log"
-    with open(log_file, 'w') as f:
-        pass
-    log(log_file, "main.py")
-    log(log_file, f"{args}")
+    log_file = init_log("main.py", args)
     
     start_time = time.time()
 
@@ -67,6 +54,8 @@ def main(args):
     criterion = torch.nn.MSELoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=args.learning_rate)
 
+    y_train, y_test = [], []
+
     # Begin Training Loop
     model.train()
     for epoch in range(1, args.epochs + 1):
@@ -81,6 +70,7 @@ def main(args):
             optimizer.step()
         
         avg_train_loss = np.mean(train_loss)
+        y_train.append(avg_train_loss)
         log(log_file, f"Average Train Loss: {avg_train_loss:.4f} {np.round(train_loss, 4)[:20]}")
 
         # Validation
@@ -93,7 +83,21 @@ def main(args):
                 test_loss.append(loss.item())
                 
         avg_test_loss = np.mean(test_loss)
+        y_test.append(avg_test_loss)
         log(log_file, f"Average Test Loss: {avg_test_loss:.4f} {np.round(test_loss, 4)[:20]}")
+
+    # Save model weights
+    log(log_file, f"Saving model weights to {args.save_model_path}")
+    torch.save(model.state_dict(), args.save_model_path)
+
+    # Generate line graph
+    x_data = [i for i in range(args.epochs+1)]
+    x_label = "Epochs"
+    y_label = "Loss"
+    title = "Training Process of GCN model"
+    legend_labels = ["Train loss", "Test loss"]
+
+    generate_line_graph(x_data, y_train, y_test, x_label, y_label, title, legend_labels, args.save_plot_path)
     
     # Print time consumed
     end_time = time.time()
@@ -107,6 +111,8 @@ if __name__ == "__main__":
     parser.add_argument('--learning_rate', type=float, default=0.01)
     parser.add_argument('--samples_per_folder', type=int, default=5)
     parser.add_argument('--batch_size', type=int, default=10)
+    parser.add_argument('--save_model_path', type=str, default="model_weights.pth")
+    parser.add_argument('--save_plot_path', type=str, default="loss_graph.png")
     args = parser.parse_args()
 
     main(args)

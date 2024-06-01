@@ -2,20 +2,13 @@ import os
 import random
 import pickle
 import argparse
-import datetime
 import time
 import numpy as np
 import torch
 from torch_geometric.loader import DataLoader
 
-from GCN import GCN
-from evaluate_aig import evaluate_aig
 from generate_data import generate_data
-
-def log(logf, message):
-    print(message)
-    with open(logf, 'a') as f:
-        f.write(message + "\n")
+from project.scripts.task1.utils import log, init_log
 
 def load_data(folder_path, samples_per_folder, log_file):
     graphs = []
@@ -37,14 +30,7 @@ def load_data(folder_path, samples_per_folder, log_file):
 
 def main(args):
     # Create log file
-    log_path = "./logs/"
-    os.makedirs(log_path, exist_ok=True)
-    timestamp = datetime.datetime.now().strftime("%y%m%d_%H%M")
-    log_file = log_path + f"{timestamp}.log"
-    with open(log_file, 'w') as f:
-        pass
-    log(log_file, "main_build_dataset.py")
-    log(log_file, f"{args}")
+    log_file = init_log("main_build_dataset.py", args)
     
     start_time = time.time()
 
