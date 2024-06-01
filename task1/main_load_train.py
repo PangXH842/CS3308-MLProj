@@ -73,7 +73,7 @@ def main(args):
     torch.save(model.state_dict(), args.save_model_path)
 
     # Generate line graph
-    x_data = [i for i in range(args.epochs+1)]
+    x_data = [i for i in range(1, args.epochs+1)]
     x_label = "Epochs"
     y_label = "Loss"
     title = "Training Process of GCN model"
