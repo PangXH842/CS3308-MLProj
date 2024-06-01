@@ -4,7 +4,7 @@ import argparse
 from GCN import GCN
 from generate_data import generate_data
 from evaluate_aig import evaluate_aig
-from project.scripts.task1.utils import log, init_log
+from utils import log, init_log
 
 def main(args):
     # Create log file

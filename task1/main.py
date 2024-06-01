@@ -9,7 +9,7 @@ from torch_geometric.loader import DataLoader
 
 from GCN import GCN
 from generate_data import generate_data
-from project.scripts.task1.utils import log, init_log, generate_line_graph
+from utils import log, init_log, generate_line_graph
 
 def load_data(folder_path, samples_per_folder, log_file):
     graphs = []

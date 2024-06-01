@@ -8,7 +8,7 @@ import torch
 from torch_geometric.loader import DataLoader
 
 from GCN import GCN
-from project.scripts.task1.utils import log, init_log, generate_line_graph
+from utils import log, init_log, generate_line_graph
 
 def main(args):
     # Create log file
