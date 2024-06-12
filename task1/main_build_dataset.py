@@ -11,6 +11,7 @@ from generate_data import generate_data
 from utils import log, init_log
 
 def load_data(folder_path, samples_per_folder, log_file):
+    states_list = []
     graphs = []
     for circuit_type in os.listdir(folder_path):
         circuit_type_path = os.path.join(folder_path, circuit_type)
@@ -24,6 +25,9 @@ def load_data(folder_path, samples_per_folder, log_file):
             with open(states_file_path, 'rb') as f:
                 states = pickle.load(f)
                 for state, score in zip(states['input'], states['target']):
+                    if state in states_list:
+                        continue
+                    states_list.append(state)
                     graph = generate_data(state, score)
                     graphs.append(graph)
     return graphs

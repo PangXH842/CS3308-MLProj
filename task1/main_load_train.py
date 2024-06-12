@@ -30,7 +30,7 @@ def main(args):
     test_dataloader = DataLoader(test_dataset, batch_size=args.batch_size, shuffle=False)
 
     # Build GCN model
-    model = GCN()
+    model = GCN(args.hidden_dims)
 
     # Loss function: Mean Square Error
     criterion = torch.nn.MSELoss()
@@ -92,6 +92,7 @@ if __name__ == "__main__":
     parser.add_argument('--epochs', type=int, default=20)
     parser.add_argument('--learning_rate', type=float, default=0.01)
     parser.add_argument('--batch_size', type=int, default=10)
+    parser.add_argument('--hidden_dims', type=int, default=16)
     parser.add_argument('--save_model_path', type=str, default="model_weights.pth")
     parser.add_argument('--save_plot_path', type=str, default="loss_graph.png")
     args = parser.parse_args()
