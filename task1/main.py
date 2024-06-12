@@ -75,7 +75,8 @@ def main(args):
         
         avg_train_loss = np.mean(train_loss)
         y_train.append(avg_train_loss)
-        log(log_file, f"Average Train Loss: {avg_train_loss:.4f} {np.round(train_loss, 4)[:20]}")
+        log(log_file, f"Average Train Loss: {avg_train_loss:.4f}")
+        # log(log_file, f"Average Train Loss: {avg_train_loss:.4f} {np.round(train_loss, 4)[:20]}")
 
         # Validation
         model.eval()
@@ -88,7 +89,8 @@ def main(args):
                 
         avg_test_loss = np.mean(test_loss)
         y_test.append(avg_test_loss)
-        log(log_file, f"Average Test Loss: {avg_test_loss:.4f} {np.round(test_loss, 4)[:20]}")
+        log(log_file, f"Average Test Loss: {avg_test_loss:.4f}")
+        # log(log_file, f"Average Test Loss: {avg_test_loss:.4f} {np.round(test_loss, 4)[:20]}")
 
     # Save model weights
     log(log_file, f"Saving model weights to {args.save_model_path}")
