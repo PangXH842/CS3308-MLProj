@@ -1,5 +1,6 @@
 import torch
 import argparse
+from torch_geometric.loader import DataLoader
 
 from GCN import GCN
 from generate_data import generate_data
@@ -16,22 +17,18 @@ def main(args):
     model.load_state_dict(torch.load(args.load_model_path))
 
     # Evaluate state
-    try:
-        eval_score = evaluate_aig(args.state)
-    except:
-        log(log_file, f"[ERROR] Invalid state: {args.state}")
-        exit(-1)
-    log(log_file, f"Evaluation of state '{args.state}':", eval_score)
+    eval_score = evaluate_aig(args.state)
+    log(log_file, f"Evaluation of state '{args.state}': {eval_score}")
 
     # Get model prediction
-    graph = generate_data(args.state)
-    model_score = model(graph.x, graph.edge_index)
-    log(log_file, f"Model prediction:", model_score)
-
-    # Calculate loss
     criterion = torch.nn.MSELoss()
-    loss = criterion(model_score, eval_score)
-    log(log_file, f"Loss:", loss)
+    graph = generate_data(args.state, eval_score)
+    dataloader = DataLoader([graph])
+    for batch in dataloader:
+        model_score = model(batch.x, batch.edge_index, batch.batch)
+        log(log_file, f"Model prediction: {float(model_score)}")
+        loss = criterion(model_score.squeeze(), batch.y.squeeze())
+        log(log_file, f"Loss: {loss}")
 
     return
 
